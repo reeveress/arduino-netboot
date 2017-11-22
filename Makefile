@@ -22,7 +22,7 @@ MODE     = $(MODE_RAW) $(MODE_8) $(MODE_N) $(MODE_1)# 8N1
 MCU       = atmega328p
 F_CPU     = 16000000UL
 PORT      = /dev/ttyACM0
-PROG      = arduino
+PROG      = usbasp 
 PROG_BAUD = 115200
 
 CC      = avr-gcc
