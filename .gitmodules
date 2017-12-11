@@ -1,3 +1,4 @@
 [submodule "arduino"]
 	path = arduino
 	url = https://github.com/esmil/oniudra-headers.git
+        branch = master
