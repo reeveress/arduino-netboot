@@ -107,7 +107,7 @@ upload: $(NAME).hex
 	$(AVRDUDE) -v -p$(MCU) -c$(PROG) $(PROG_$(PROG)) -Uflash:w:$<:i
 
 fuses:
-	$(AVRDUDE) -v -p$(MCU) -c$(PROG) $(PROG_$(PROG)) -Ulfuse:w:0xFF:m -Uhfuse:w:0xDA:m -Uefuse:w:0x05:m
+	$(AVRDUDE) -v -p$(MCU) -c$(PROG) $(PROG_$(PROG)) -Ulfuse:w:0xFF:m -Uhfuse:w:0xDA:m -Uefuse:w:0xFD:m
 
 list: $(NAME).lss
 
