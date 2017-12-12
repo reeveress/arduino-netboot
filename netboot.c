@@ -58,6 +58,7 @@
 #define MASK_2K 0x7FF
 #define SIZE_2K 0x800
 
+// EDIT THE LINE BELOW TO UPDATE ARDUINO MAC ADDRESS!!!!!
 #define MAC_ADDRESS { 0x00, 0x08, 0xDC, 0x00, 0x00, 0x6A }
 
 #define XID0 0x12
