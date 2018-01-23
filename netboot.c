@@ -58,8 +58,7 @@
 #define MASK_2K 0x7FF
 #define SIZE_2K 0x800
 
-// EDIT THE LINE BELOW TO UPDATE ARDUINO MAC ADDRESS!!!!!
-#define MAC_ADDRESS { 0x00, 0x08, 0xDC, 0x00, 0x03, 0x4F }
+#define MAC_ADDRESS { 0x00, 0x00, 0x00, 0x00, 0x00, 0xff }
 
 #define XID0 0x12
 #define XID1 0x34
@@ -631,6 +630,23 @@ tftp_get(void)
 	return 0;
 }
 
+
+void eeprom_write(uint16_t addr, uint8_t data)
+{
+    //cli();
+    while(EECR & _BV(EEPE)); //wait for EEPE to be 0
+    while(SPMCSR & _BV(SELFPRGEN)); //wait in case Flash is programming
+    EEAR = addr;
+    EEDR = data;
+    EECR = _BV(EEMPE);  //set EEMPE to 1 (and EEPE to 0)
+    EECR |= _BV(EEPE);  //set EEPE to 1 also(within 4clks) to initiate write
+    return;
+}
+
+
+
+
+
 static uint8_t
 eeprom_read(uint16_t addr)
 {
@@ -647,30 +663,39 @@ eeprom_read(uint16_t addr)
 static void
 init_mac_addr(void)
 {
-	uint16_t eaddr = EEPROM_SIZE - 8;
-	uint8_t i;
-	uint8_t sum;
 
-	if (eeprom_read(eaddr++) != 0)
-		goto fallback;
+        uint16_t eaddr = 0;
+        uint8_t i;
+        for (i=0; i<6; i++){
+	    mac_addr[i] = pgm_read_byte(&(fallback_mac_addr[i]));
+            eeprom_write(eaddr++,mac_addr[i]);
+        }
 
-	sum = eeprom_read(eaddr++);
-	for (i = 0; i < 6; i++) {
-		uint8_t b = eeprom_read(eaddr++);
 
-		mac_addr[i] = b;
-		sum += b;
-	}
-
-	if (sum == 17) {
-		printd("Found MAC in EEPROM\r\n");
-		return;
-	}
-
-fallback:
-	printd("Falling back to default MAC\r\n");
-	for (i = 0; i < 6; i++)
-		mac_addr[i] = pgm_read_byte(&(fallback_mac_addr[i]));
+//	uint16_t eaddr = EEPROM_SIZE - 8;
+//	uint8_t i;
+//	uint8_t sum;
+//
+//	if (eeprom_read(eaddr++) != 0)
+//		goto fallback;
+//
+//	sum = eeprom_read(eaddr++);
+//	for (i = 0; i < 6; i++) {
+//		uint8_t b = eeprom_read(eaddr++);
+//
+//		mac_addr[i] = b;
+//		sum += b;
+//	}
+//
+//	if (sum == 17) {
+//		printd("Found MAC in EEPROM\r\n");
+//		return;
+//	}
+//
+//fallback:
+//	printd("Falling back to default MAC\r\n");
+//	for (i = 0; i < 6; i++)
+//		mac_addr[i] = pgm_read_byte(&(fallback_mac_addr[i]));
 }
 
 int
