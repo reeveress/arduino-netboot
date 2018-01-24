@@ -58,7 +58,13 @@
 #define MASK_2K 0x7FF
 #define SIZE_2K 0x800
 
-#define MAC_ADDRESS { 0x00, 0x00, 0x00, 0x00, 0x00, 0xff }
+// *****SET THE ARDUINO MAC ADDRESS HERE*****
+#define MAC_ADDRESS { 0x00, 0x08, 0xdc, 0x00, 0x04, 0x4f }
+// *****SET NODE ID HERE*****
+#define NODE_ID 4
+
+
+
 
 #define XID0 0x12
 #define XID1 0x34
@@ -192,7 +198,7 @@ wiz_memset(uint16_t reg, uint8_t c, uint8_t len)
 		wiz_set(reg++, c);
 }
 
-static const uint8_t fallback_mac_addr[] PROGMEM = MAC_ADDRESS;
+static const uint8_t node_mac_addr[] PROGMEM = MAC_ADDRESS;
 
 static uint8_t mac_addr[6] __noinit;
 
@@ -647,31 +653,30 @@ void eeprom_write(uint16_t addr, uint8_t data)
 
 
 
-static uint8_t
-eeprom_read(uint16_t addr)
-{
-	/* make sure eeprom is ready */
-	while (EECR & _BV(EEPE));
-
-	EEAR = addr;
-
-	EECR |= _BV(EERE);
-
-	return EEDR;
-}
+//static uint8_t
+//eeprom_read(uint16_t addr)
+//{
+//	/* make sure eeprom is ready */
+//	while (EECR & _BV(EEPE));
+//
+//	EEAR = addr;
+//
+//	EECR |= _BV(EERE);
+//
+//	return EEDR;
+//}
 
 static void
 init_mac_addr(void)
 {
-
         uint16_t eaddr = 0;
         uint8_t i;
         for (i=0; i<6; i++){
-	    mac_addr[i] = pgm_read_byte(&(fallback_mac_addr[i]));
+	    mac_addr[i] = pgm_read_byte(&(node_mac_addr[i]));
             eeprom_write(eaddr++,mac_addr[i]);
         }
-
-
+        uint16_t eeaddr_node = 6;
+        eeprom_write(eeaddr_node,NODE_ID);
 //	uint16_t eaddr = EEPROM_SIZE - 8;
 //	uint8_t i;
 //	uint8_t sum;
@@ -695,8 +700,10 @@ init_mac_addr(void)
 //fallback:
 //	printd("Falling back to default MAC\r\n");
 //	for (i = 0; i < 6; i++)
-//		mac_addr[i] = pgm_read_byte(&(fallback_mac_addr[i]));
+//		mac_addr[i] = pgm_read_byte(&(mac_addr[i]));
 }
+
+
 
 int
 main(void)
