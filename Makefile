@@ -81,7 +81,7 @@ bootloader: $(NAME).hex
 
 %.elf: $(or $(FILES),%.c)
 	@echo '  CC $@'
-	@$(CC) $(CFLAGS) $< -o $@ $(LDFLAGS)
+	@$(CC) $(CFLAGS) -DMAC_ADDRESS=$(mac) $< -o $@ $(LDFLAGS)
 
 %.hex: %.elf
 	@echo '  OBJCOPY $@'

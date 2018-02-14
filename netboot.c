@@ -59,11 +59,9 @@
 #define SIZE_2K 0x800
 
 // *****SET THE ARDUINO MAC ADDRESS HERE*****
-#define MAC_ADDRESS { 0x00, 0x08, 0xdc, 0x00, 0x04, 0x4f }
-// *****SET NODE ID HERE*****
-#define NODE_ID 4
-
-
+#ifndef MAC_ADDRESS
+#error You must define "mac" address from command line.
+#endif
 
 
 #define XID0 0x12
@@ -675,8 +673,6 @@ init_mac_addr(void)
 	    mac_addr[i] = pgm_read_byte(&(node_mac_addr[i]));
             eeprom_write(eaddr++,mac_addr[i]);
         }
-        uint16_t eeaddr_node = 6;
-        eeprom_write(eeaddr_node,NODE_ID);
 //	uint16_t eaddr = EEPROM_SIZE - 8;
 //	uint8_t i;
 //	uint8_t sum;
